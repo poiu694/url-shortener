@@ -1,12 +1,15 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import type { Request, Response, Application, NextFunction } from 'express';
 
+import Mongo from './config/mongo.json';
 import router from './routes/shortener.router';
 
 const PORT = 8080;
 
 export default class App {
   app: Application;
+  mongoose: typeof mongoose;
   server: ReturnType<Application['listen']>;
 
   constructor() {
@@ -15,9 +18,18 @@ export default class App {
     this.config();
   }
 
-  private config() {
+  private async config() {
     this.app.use(cors);
     this.app.use(router);
+    await this.dbConnect();
+  }
+
+  private async dbConnect() {
+    try {
+      this.mongoose = await mongoose.connect(Mongo.srv);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   public listen() {
