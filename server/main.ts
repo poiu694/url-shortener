@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response, Application, NextFunction } from 'express';
 
-import { base62 } from './utils/base62';
+import router from './routes/shortener.router';
 
 const PORT = 8080;
 
@@ -17,6 +17,7 @@ export default class App {
 
   private config() {
     this.app.use(cors);
+    this.app.use(router);
   }
 
   public listen() {
