@@ -1,6 +1,14 @@
-import mongoose, { Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-const urlSchema = new Schema(
+export interface ShortURL {
+  id: number;
+  originalUrl: string;
+  shortenUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const urlSchema = new Schema<ShortURL>(
   {
     id: { type: Number, required: true, unique: true },
     originalUrl: { type: String, required: true, unique: true },
@@ -11,4 +19,4 @@ const urlSchema = new Schema(
   }
 );
 
-export const UrlModel = mongoose.model('url', urlSchema);
+export const UrlModel = model<ShortURL>('url', urlSchema);
