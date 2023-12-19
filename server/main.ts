@@ -16,12 +16,14 @@ export default class App {
     this.app = express();
 
     this.config();
+    this.dbConnect();
   }
 
-  private async config() {
+  private config() {
     this.app.use(cors);
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json());
     this.app.use(router);
-    await this.dbConnect();
   }
 
   private async dbConnect() {
