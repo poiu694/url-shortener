@@ -47,10 +47,7 @@ function cors(req: Request, res: Response, next: NextFunction) {
   const method = req.method && req.method.toUpperCase && req.method.toUpperCase();
 
   res.header('Access-Control-Allow-Origin', ORIGIN);
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
   if (method === 'OPTIONS') {
     res.statusCode = OPTIONS_SUCCESS_STATUS;
