@@ -13,5 +13,6 @@ const shortenerController = new ShortenerController(shortenerService);
 
 router.get('/api/test', shortenerController.test);
 router.post('/api/short-url', shortenerController.toShortenUrl);
+router.get('/:url', shortenerController.getOriginalUrlFromShortenedUrl);
 
 export default router;
