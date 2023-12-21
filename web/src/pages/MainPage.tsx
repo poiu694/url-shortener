@@ -20,12 +20,18 @@ function MainPage() {
       alert('유효하지 않은 주소입니다.');
       return;
     }
+    const existUrl = shortUrls.find((shortUrl) => shortUrl.originalUrl === url);
+    if (existUrl) {
+      alert('이미 단축되어있습니다.');
+      return;
+    }
     try {
       const res = await api.post('/api/short-url', {
         url,
       });
       alert(res.data.msg);
       setShortUrls((prev) => [...prev, res.data.url]);
+      setUrl('');
     } catch (err) {
       alert('문제가 생겼습니다.');
     }
