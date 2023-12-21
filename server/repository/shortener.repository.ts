@@ -52,6 +52,7 @@ export class ShortenerRepository {
     try {
       const createdUrl = new UrlModel(url);
       await createdUrl.save();
+      return createdUrl;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
