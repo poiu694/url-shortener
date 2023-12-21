@@ -16,6 +16,10 @@ function MainPage() {
 
   const onSubmitUrl = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!/^(http|https):/.test(url)) {
+      alert('유효하지 않은 주소입니다.');
+      return;
+    }
     try {
       const res = await api.post('/api/short-url', {
         url,
