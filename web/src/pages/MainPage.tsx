@@ -1,30 +1,64 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { api } from '../api/api';
+import useLocalStorage from '../hooks/useLocalStorage';
+
+interface ShortURL {
+  id: number;
+  originalUrl: string;
+  shortenUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 function MainPage() {
-  const [count, setCount] = useState(0);
+  const [url, setUrl] = useState<string>('');
+  const [shortUrls, setShortUrls] = useLocalStorage<ShortURL[]>('urls', []);
 
-  useEffect(() => {
-    (async () => {
-      const res = await axios.get('http://localhost:8080/BvJjyJz');
-      console.log(res);
-    })();
-  }, []);
+  const onSubmitUrl = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('/api/short-url', {
+        url,
+      });
+      alert(res.data.msg);
+      setShortUrls((prev) => [...prev, res.data.url]);
+    } catch (err) {
+      alert('문제가 생겼습니다.');
+    }
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank"></a>
-        <a href="https://react.dev" target="_blank"></a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
+      <main>
+        <h1>URL Shortener</h1>
+        <form onSubmit={onSubmitUrl} style={{ display: 'flex', gap: '4px' }}>
+          <span>ORIGINAL URL</span>
+          <input value={url} onChange={(e) => setUrl(e.target.value)} />
+          <button type="submit" aria-label="submit url">
+            SHORT
+          </button>
+        </form>
+        <ul>
+          <table style={{ width: '100%', textAlign: 'center' }}>
+            <thead>
+              <td>INDEX</td>
+              <td>SHORTEN</td>
+              <td>ORIGINAL</td>
+            </thead>
+            {shortUrls.map((shortUrl, index) => (
+              <tr key={shortUrl.id}>
+                <td>{index + 1}.</td>
+                <td>
+                  <a href={shortUrl.originalUrl} target="_blank" style={{ marginInline: 320 }}>
+                    http://localhost:5173/{shortUrl.shortenUrl}
+                  </a>
+                </td>
+                <td>{shortUrl.originalUrl}</td>
+              </tr>
+            ))}
+          </table>
+        </ul>
+      </main>
     </>
   );
 }
