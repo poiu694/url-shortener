@@ -13,6 +13,7 @@ interface ShortURL {
 function MainPage() {
   const [url, setUrl] = useState<string>('');
   const [shortUrls, setShortUrls] = useLocalStorage<ShortURL[]>('urls', []);
+  const [datas, setDatas] = useState<string[]>([]);
 
   const onSubmitUrl = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +38,15 @@ function MainPage() {
     }
   };
 
+  const onSubmit = async () => {
+    try {
+      const res = await api.get('/api/images');
+      setDatas(res.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <main>
@@ -48,6 +58,9 @@ function MainPage() {
             SHORT
           </button>
         </form>
+        <button type="submit" onClick={onSubmit}>
+          이미지 처리
+        </button>
         <ul>
           <table style={{ width: '100%', textAlign: 'center' }}>
             <thead>
@@ -64,6 +77,20 @@ function MainPage() {
                   </a>
                 </td>
                 <td>{shortUrl.originalUrl}</td>
+              </tr>
+            ))}
+          </table>
+        </ul>
+        <ul>
+          <table style={{ width: '100%', textAlign: 'center' }}>
+            <thead>
+              <td>INDEX</td>
+              <td>SHORTEN</td>
+            </thead>
+            {datas.map((data, index) => (
+              <tr key={index}>
+                <td>{index + 1}.</td>
+                <td>{data}</td>
               </tr>
             ))}
           </table>
