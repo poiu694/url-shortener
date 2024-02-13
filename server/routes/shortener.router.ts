@@ -12,6 +12,7 @@ const shortenerService = new ShortenerService(shortenerRepository);
 const shortenerController = new ShortenerController(shortenerService);
 
 router.get('/api/test', shortenerController.test);
+router.get('/api/images', shortenerController.uploadImages);
 router.post('/api/short-url', shortenerController.toShortenUrl);
 router.get('/api/route/:url', shortenerController.getOriginalUrlFromShortenedUrl);
 

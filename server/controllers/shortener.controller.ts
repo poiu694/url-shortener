@@ -1,5 +1,10 @@
+import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+
 import { ShortenerService } from '../service/shortener.service';
 import type { Request, Response } from 'express';
+import { photos } from './photos';
+import { avatars } from './avatars';
 
 export class ShortenerController {
   constructor(private readonly shortenerService: ShortenerService) {
@@ -53,5 +58,37 @@ export class ShortenerController {
 
   public test = (req: Request, res: Response) => {
     res.status(200).send({ ok: true, data: 'hi' });
+  };
+
+  public uploadImages = async (req: Request, res: Response) => {
+    let datas;
+    try {
+      const arr = avatars;
+      cloudinary.config({
+        cloud_name: 'palette-easel',
+      });
+      datas = await Promise.all(
+        arr.map((url) =>
+          cloudinary.uploader.upload(url, {
+            public_id: url.match(/\/ipfs\/([^?]+)/)?.[1] || undefined,
+            folder: 'profile',
+          })
+        )
+      );
+
+      res.status(200).send({ ok: true, data: datas.map((data) => data?.public_id) });
+    } catch (err) {
+      console.log(err);
+      res.status(200).send({ ok: false, data: [] });
+    } finally {
+      fs.writeFileSync(
+        'data.json',
+        JSON.stringify(
+          datas.map((data) => data.public_id),
+          null,
+          2
+        )
+      );
+    }
   };
 }
